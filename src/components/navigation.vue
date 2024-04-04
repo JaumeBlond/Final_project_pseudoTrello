@@ -1,6 +1,6 @@
 <template>
     <div v-if="showSidebar">
-        <button @click="toggleSidebar" class="sidebar-toggle">
+        <button v-if="!isSidebarVisible" @click="toggleSidebar" class="sidebar-toggle">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                     d="M2 3a1 1 0 0 1 1-1h14a1 1 0 0 1 0 2H3a1 1 0 0 1-1-1zm16 4a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h14a1 1 0 0 0 1-1zm-5 4a1 1 0 1 0-2 0v4a1 1 0 0 0 2 0v-4z" />
@@ -8,11 +8,17 @@
         </button>
 
         <div class="sidebar" :class="{ 'visible': isSidebarVisible }">
-            <!-- Render navigation links only if screen size is >= 788px -->
-            <div class="nav-links" v-if="showNavbar">
+            <button @click="toggleSidebar" class="sidebar-close">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 10 10" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M2 3a1 1 0 0 1 1-1h14a1 1 0 0 1 0 2H3a1 1 0 0 1-1-1zm16 4a1 1 0 0 0-1-1H3a1 1 0 0 0 0 2h14a1 1 0 0 0 1-1zm-5 4a1 1 0 1 0-2 0v4a1 1 0 0 0 2 0v-4z" />
+                </svg>
+            </button>
+            <div class="nav-links" v-if="isSidebarVisible">
                 <router-link to="/">Home</router-link>
                 <router-link to="/about">About</router-link>
                 <router-link to="/contact">Contact</router-link>
+                <button @click="logout" class="logout-button">Logout</button>
             </div>
         </div>
     </div>
@@ -26,6 +32,7 @@
                     <router-link to="/">Home</router-link>
                     <router-link to="/about">About</router-link>
                     <router-link to="/contact">Contact</router-link>
+                    <button @click="logout" class="logout-button">Logout</button>
                 </div>
             </div>
         </nav>
@@ -46,7 +53,20 @@ export default {
         },
 
         shouldShowSidebar() {
-            this.showSidebar = window.innerWidth <= 768; // Adjust breakpoint as needed
+            this.showSidebar = window.innerWidth <= 500; // Adjust breakpoint as needed
+        },
+        async logout() {
+            const supabase = createClient('https://kxdrvypbrgprmamapgfb.supabase.co', '');
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                    throw error;
+                }
+                // Redirect to the login page after logout
+                this.$router.push({ name: 'login' }); // Adjust route name as needed
+            } catch (error) {
+                console.error('Logout error:', error.message);
+            }
         }
     },
     mounted() {
@@ -78,8 +98,8 @@ export default {
 
 .nav-links {
     margin-top: 50px;
-    /* Adjust top margin to accommodate navbar */
     padding: 10px;
+    color: black;
 }
 
 .nav-links a {

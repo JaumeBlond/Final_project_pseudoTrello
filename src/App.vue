@@ -1,20 +1,13 @@
 <template>
-  <!-- Navigation bar and Sidebar -->
-  <navigation />
   <div id="main">
     <router-view />
   </div>
 </template>
 
 <script>
-import navigation from "./components/navigation.vue";
-
 
 export default {
   name: 'App',
-  components: {
-    navigation
-  }
 }
 </script>
 
@@ -41,10 +34,6 @@ export default {
 * {
   margin: 0;
   padding: 0;
-}
-
-.task-board {
-  display: flex;
 }
 
 .task-list {

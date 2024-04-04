@@ -1,5 +1,6 @@
 <template>
   <div class="task-board">
+    <navigation />
     <div v-if="isMobileView" class="task-list-vertical" v-for="list in lists" :key="list.id">
       <h2>{{ list.title }}</h2>
       <task v-for="task in list.tasks" :key="task.id" :task="task" @edit="editTask" @delete="deleteTask"
@@ -19,11 +20,13 @@
 <script>
 import { defineComponent } from 'vue';
 import Task from "./Task.vue";
+import navigation from "./navigation.vue";
 
 export default defineComponent({
   name: 'TaskBoard',
   components: {
-    Task
+    Task,
+    navigation
   },
   data() {
     return {
@@ -186,5 +189,9 @@ export default defineComponent({
   .task {
     max-height: 600px;
   }
+}
+
+.task-board {
+  display: flex;
 }
 </style>
