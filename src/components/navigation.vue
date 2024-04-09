@@ -39,44 +39,38 @@
     </div>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            isSidebarVisible: false,
-            showSidebar: false
-        };
-    },
-    methods: {
-        toggleSidebar() {
-            this.isSidebarVisible = !this.isSidebarVisible;
-        },
+<script setup>
+import { useUserStore } from '@/stores/userStore';
+import { canAccess } from '@/router/utils';
 
-        shouldShowSidebar() {
-            this.showSidebar = window.innerWidth <= 500; // Adjust breakpoint as needed
-        },
-        async logout() {
-            const supabase = createClient('https://kxdrvypbrgprmamapgfb.supabase.co', '');
-            try {
-                const { error } = await supabase.auth.signOut();
-                if (error) {
-                    throw error;
-                }
-                // Redirect to the login page after logout
-                this.$router.push({ name: 'login' }); // Adjust route name as needed
-            } catch (error) {
-                console.error('Logout error:', error.message);
-            }
-        }
-    },
-    mounted() {
-        this.shouldShowSidebar()
-        window.addEventListener('resize', this.shouldShowSidebar);
-    },
-    beforeUnmount() {
-        window.removeEventListener('resize', this.shouldShowSidebar);
-    },
+const { signOut } = useUserStore();
+
+let isSidebarVisible = false;
+let showSidebar = false;
+
+const toggleSidebar = () => {
+    isSidebarVisible = !isSidebarVisible;
 };
+
+const shouldShowSidebar = () => {
+    showSidebar = window.innerWidth <= 500; // Adjust breakpoint as needed
+};
+
+const logout = async () => {
+    signOut();
+    canAccess();
+};
+
+import { onMounted, onBeforeUnmount } from 'vue';
+
+onMounted(() => {
+    shouldShowSidebar();
+    window.addEventListener('resize', shouldShowSidebar);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', shouldShowSidebar);
+});
 </script>
 
 <style scoped>

@@ -5,24 +5,24 @@
     </div>
 </template>
 
-<script>
-export default {
-    props: {
-        task: Object
-    },
-    methods: {
-        editTask() {
-            this.$emit('edit', this.task);
-        },
-        deleteTask() {
-            this.$emit('delete', this.task.id);
-        },
-        dragStart(event) {
-            event.dataTransfer.setData("text/plain", JSON.stringify(this.task));
-        }
-    }
+<script setup>
+const props = defineProps({
+    task: Object
+});
+
+const editTask = () => {
+    emit('edit', props.task);
+};
+
+const deleteTask = () => {
+    emit('delete', props.task.id);
+};
+
+const dragStart = (event) => {
+    event.dataTransfer.setData("text/plain", JSON.stringify(props.task));
 };
 </script>
+
 
 <style scoped>
 .task {
