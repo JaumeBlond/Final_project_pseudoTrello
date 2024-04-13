@@ -29,7 +29,6 @@ export const logIn = async (email, password) => {
   if (error) {
     throw new Error(error.message)
   }
-
   return user
 }
 

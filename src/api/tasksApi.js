@@ -1,21 +1,13 @@
 import { supabase } from "@/api/supabase";
 
-export const fetchAllTasks = async () => {
-  const { data, error } = await supabase.from("tasks").select("*");
-
+export const fetchAllTasks = async (user) => {
+  console.log(user)
+  const { data, error } =
+  await supabase.from('tasks').select().eq('user_id', user)
+          
   if (error) {
     throw new Error(error.message);
   }
-
-  return data;
-};
-
-export const fetchAllTables = async () => {
-  const { data, error } = await supabase.from("tasks").select("*");
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
+  console.log(data)
   return data;
 };

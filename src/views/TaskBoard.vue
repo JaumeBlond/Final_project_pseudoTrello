@@ -16,15 +16,26 @@
           draggable="true" />
       </div>
     </div>
+    <button @click="openModal" class="add-task-button">Add Task</button>
+    <task-modal v-if="showModal" @save="saveTask" @close="closeModal" />
   </div>
 </template>
 
 <script setup>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, reactive } from 'vue';
 import Task from "@/components/Task.vue";
 import navigation from "@/components/navigation.vue";
+import TaskModal from "@/components/taskModal.vue";
+import { useTasksStore } from "@/stores/tasksStore";
+import { useUserStore } from "@/stores/userStore.js";
 
-const lists = ref([
+const tasksStore = useTasksStore();
+const userStore = useUserStore();
+
+const tasks = ref([]);
+
+
+const lists = reactive([
   {
     id: 1,
     title: 'To Do',
@@ -51,6 +62,24 @@ const lists = ref([
 ]);
 
 let isMobileView = false;
+let showModal = ref(false);
+
+const openModal = () => {
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+};
+
+const saveTask = (task) => {
+  lists.value[0].tasks.push({ id: generateUniqueId(), ...task, status: 'todo' });
+  closeModal(); // Close modal after saving task
+};
+
+const generateUniqueId = () => {
+  return Math.random().toString(36).substr(2, 9);
+};
 
 const editTask = (task) => {
   // Implement edit task logic
@@ -133,8 +162,18 @@ const checkIsMobileView = () => {
 import { onMounted, onBeforeUnmount } from 'vue';
 
 onMounted(() => {
+
   checkIsMobileView();
   window.addEventListener('resize', checkIsMobileView);
+
+  try {
+    const user = userStore.user.id
+    console.log(user)
+    tasks.value = tasksStore.fetchTasks(user);
+    console.log(tasks.value)
+  } catch (error) {
+    console.error('Error fetching tasks:', error.message);
+  }
 });
 
 onBeforeUnmount(() => {

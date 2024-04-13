@@ -10,7 +10,6 @@ export const generalBeforeEach = async (to, from, next) => {
 
   if (userStore.user) {
     const tasksStore = useTasksStore()
-    await tasksStore.fetchTasks()
   }
 
   next()
@@ -27,7 +26,6 @@ export const canAccess = async (to, from, next) => {
     next({ name: 'login' })
   } else {
     const tasksStore = useTasksStore()
-    await tasksStore.fetchTasks()
     next()
   }
 }
@@ -37,7 +35,6 @@ export const isUserLogged = async (to, from, next) => {
 
   if (userStore.user) {
     const tasksStore = useTasksStore()
-    await tasksStore.fetchTasks()
     next({ name: 'tasks' })
   } else {
     next()

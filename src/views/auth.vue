@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>Authentication</h1>
-        <form v-if="!isSignUpComputed" @submit.prevent="signIn">
+        <form v-if="!isSignUpComputed" @submit.prevent="userLogIn">
             <input type="email" v-model="email" placeholder="Email" required>
             <input type="password" v-model="password" placeholder="Password" required>
             <button type="submit">Sign In</button>
@@ -21,28 +21,36 @@
 </template>
 
 <script setup>
+import { ref, computed, watch } from 'vue';
 import { supabase } from "@/api/supabase";
+import { logIn } from "@/api/usersApi";
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
 
-let email = '';
-let password = '';
-let name = '';
-let surname = '';
+const router = useRouter()
+const userStore = useUserStore()
+
+const { signIn } = useUserStore()
+
+let email = ref('');
+let password = ref('');
+let name = ref('');
+let surname = ref('');
 let error = null;
 
-const signIn = async () => {
-    try {
-        const { error } = await supabase.auth.signIn({
-            email,
-            password,
-        });
-        if (error) {
-            throw error;
+watch(
+    () => userStore.user,
+    (value) => {
+        if (value) {
+            router.push({ name: 'board' })
         }
-        // Redirect to taskboard upon successful sign-in
-        $router.push({ name: 'dashboard' }); // Adjust route name as needed
-    } catch (error) {
-        error = error;
     }
+)
+
+const userLogIn = () => {
+    signIn(email.value,
+        password.value)
+
 };
 
 const signUp = async () => {
@@ -56,7 +64,7 @@ const signUp = async () => {
         }
         console.log(user);
         // Redirect to taskboard upon successful sign-up
-        $router.push({ name: 'dashboard' }); // Adjust route name as needed
+        $router.push({ name: 'board' }); // Adjust route name as needed
     } catch (error) {
         error = error;
     }
@@ -73,6 +81,5 @@ const toggleSignUp = () => {
 };
 
 // Define isSignUpComputed as a computed property
-import { ref, computed } from 'vue';
 const isSignUpComputed = ref(false);
 </script>

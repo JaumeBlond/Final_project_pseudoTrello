@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, isProxy, toRaw } from "vue";
 import { defineStore } from "pinia";
 import { fetchAllTasks } from "@/api/tasksApi";
 
@@ -9,9 +9,10 @@ export const useTasksStore = defineStore("tasks", () => {
   // Getters
 
   // Actions
-  function fetchTasks() {
+  function fetchTasks(user) {
+    console.log(user)
     try {
-      tasks.value = fetchAllTasks();
+      tasks.value = fetchAllTasks(user);
     } catch (error) {
       console.error(error);
     }
