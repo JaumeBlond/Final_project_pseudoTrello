@@ -3,7 +3,7 @@
   <div class="task-board">
     <div v-if="isMobileView" class="task-list-vertical" v-for="list in lists" :key="list.id">
       <h2>{{ list.title }}</h2>
-      <task v-for="task in list.tasks" :key="task.id" :task="task" @edit="editTask" @delete="deleteTask"
+      <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask"
         @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
         draggable="true" />
     </div>
@@ -11,7 +11,7 @@
       <div class="task-list" v-for="list in lists" :key="list.id" @dragover.prevent @drop="dropTask($event, list.id)"
         @touchmove.prevent @touchend="touchEnd($event, list.id)">
         <h2>{{ list.title }}</h2>
-        <task v-for="task in list.tasks" :key="task.id" :task="task" @edit="editTask" @delete="deleteTask"
+        <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask"
           @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
           draggable="true" />
       </div>
@@ -21,9 +21,11 @@
   </div>
 </template>
 
+
 <script setup>
-import { defineComponent, ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import Task from "@/components/Task.vue";
+import { storeToRefs } from 'pinia'
 import navigation from "@/components/navigation.vue";
 import TaskModal from "@/components/taskModal.vue";
 import { useTasksStore } from "@/stores/tasksStore";
@@ -32,34 +34,45 @@ import { useUserStore } from "@/stores/userStore.js";
 const tasksStore = useTasksStore();
 const userStore = useUserStore();
 
-const tasks = ref([]);
+const { tasks } = storeToRefs(tasksStore)
 
+const tasksToShow = reactive([])
 
-const lists = reactive([
+let lists = reactive([
   {
     id: 1,
     title: 'To Do',
-    tasks: [
-      { id: 1, title: 'Task 1', status: 'todo' },
-      { id: 2, title: 'Task 2', status: 'todo' }
-    ]
+    status: 1,
+    tasks: []
   },
   {
     id: 2,
     title: 'In Progress',
-    tasks: [
-      { id: 3, title: 'Task 3', status: 'in_progress' },
-      { id: 4, title: 'Task 4', status: 'in_progress' }
-    ]
+    status: 2,
+    tasks: []
   },
   {
     id: 3,
     title: 'Done',
-    tasks: [
-      { id: 5, title: 'Task 5', status: 'done' }
-    ]
+    status: 3,
+    tasks: []
   }
 ]);
+
+const sortTasksIntoLists = () => {
+  // Clear existing tasks in lists
+  lists.forEach(list => {
+    list.tasks = [];
+  });
+  let i = 0
+  // Sort tasks into lists
+  tasksToShow.value.forEach(task => {
+    const list = lists.find(list => list.status === task.status);
+    if (list) {
+      list.tasks.push(task);
+    }
+  });
+};
 
 let isMobileView = false;
 let showModal = ref(false);
@@ -108,18 +121,19 @@ const dropTask = (event, targetListId) => {
     event.preventDefault();
     const data = JSON.parse(event.dataTransfer.getData("text/plain"));
     const taskId = data.taskId;
-    const sourceListId = lists.value.find(list => list.tasks.some(task => task.id === taskId)).id;
+    const sourceListId = lists.findIndex(list => list.tasks.some(task => task.id === taskId));
+    const targetList = lists.find(list => list.id === targetListId);
 
-    const sourceList = lists.value.find(list => list.id === sourceListId);
-    const targetList = lists.value.find(list => list.id === targetListId);
-    const taskIndex = sourceList.tasks.findIndex(task => task.id === taskId);
-
-    if (sourceList && targetList && taskIndex !== -1) {
-      const task = sourceList.tasks.splice(taskIndex, 1)[0];
-      task.status = getStatusByListId(targetListId);
-      targetList.tasks.push(task);
-      // Ensure reactivity
-      lists.value = [...lists.value];
+    if (sourceListId !== -1 && targetList) {
+      const sourceList = lists[sourceListId];
+      const taskIndex = sourceList.tasks.findIndex(task => task.id === taskId);
+      if (taskIndex !== -1) {
+        const task = sourceList.tasks.splice(taskIndex, 1)[0];
+        task.status = targetList.status;
+        targetList.tasks.push(task);
+        // Ensure reactivity
+        lists.value = [...lists.value];
+      }
     }
   }
 };
@@ -129,18 +143,17 @@ const touchEnd = (event, targetListId) => {
     event.preventDefault();
     const data = JSON.parse(event.dataTransfer.getData("text/plain"));
     const taskId = data.taskId;
-    const sourceListId = lists.value.find(list => list.tasks.some(task => task.id === taskId)).id;
-
-    const sourceList = lists.value.find(list => list.id === sourceListId);
+    const sourceList = lists.value.find(list => list.tasks.some(task => task.id === taskId));
     const targetList = lists.value.find(list => list.id === targetListId);
-    const taskIndex = sourceList.tasks.findIndex(task => task.id === taskId);
-
-    if (sourceList && targetList && taskIndex !== -1) {
-      const task = sourceList.tasks.splice(taskIndex, 1)[0];
-      task.status = getStatusByListId(targetListId);
-      targetList.tasks.push(task);
-      // Ensure reactivity
-      lists.value = [...lists.value];
+    if (sourceList && targetList) {
+      const taskIndex = sourceList.tasks.findIndex(task => task.id === taskId);
+      if (taskIndex !== -1) {
+        const task = sourceList.tasks.splice(taskIndex, 1)[0];
+        task.status = getStatusByListId(targetListId);
+        targetList.tasks.push(task);
+        // Ensure reactivity
+        lists.value = [...lists.value];
+      }
     }
   }
 };
@@ -161,16 +174,23 @@ const checkIsMobileView = () => {
 
 import { onMounted, onBeforeUnmount } from 'vue';
 
-onMounted(() => {
+const printTasks = () => {
+  lists.forEach(list => {
+    console.log(`Tasks in ${list.title}:`, list.tasks);
+  });
+};
 
+watch(() => lists, printTasks, { deep: true });
+
+
+onMounted(async () => {
   checkIsMobileView();
   window.addEventListener('resize', checkIsMobileView);
-
   try {
-    const user = userStore.user.id
-    console.log(user)
-    tasks.value = tasksStore.fetchTasks(user);
-    console.log(tasks.value)
+    const user = userStore.user.id;
+    tasksStore.fetchTasks(user);
+    tasksToShow.value = await tasks.value
+    await sortTasksIntoLists();
   } catch (error) {
     console.error('Error fetching tasks:', error.message);
   }
@@ -180,8 +200,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', checkIsMobileView);
 });
 </script>
-
-
 
 <style scoped>
 .task-board {

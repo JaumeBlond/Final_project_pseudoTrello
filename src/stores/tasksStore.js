@@ -7,6 +7,9 @@ export const useTasksStore = defineStore("tasks", () => {
   const tasks = ref([]);
 
   // Getters
+  function getTasks() {
+    return tasks
+  }
 
   // Actions
   function fetchTasks(user) {
@@ -22,6 +25,7 @@ export const useTasksStore = defineStore("tasks", () => {
     // State
     tasks,
     // Getters
+    getTasks,
     // Actions
     fetchTasks,
   };
