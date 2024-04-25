@@ -40,12 +40,12 @@ let surname = ref('');
 let error = null;
 
 watch(
-	() => userStore.user,
-	(value) => {
-		if (value && userStore.isLoggedIn) {
-			router.push({ name: 'board' }); // Assuming 'boards' is the name of the route for the boards page
-		}
-	}
+    () => userStore.user,
+    (value) => {
+        if (value) {
+            router.push({ name: 'board' })
+        }
+    }
 )
 
 const userLogIn = () => {

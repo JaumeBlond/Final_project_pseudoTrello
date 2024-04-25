@@ -41,10 +41,10 @@
 
 <script setup>
 import { useUserStore } from '@/stores/userStore';
-import { canAccess } from '@/router/utils';
+import { useRouter } from 'vue-router'
 
 const { signOut } = useUserStore();
-
+const router = useRouter()
 let isSidebarVisible = false;
 let showSidebar = false;
 
@@ -57,9 +57,9 @@ const shouldShowSidebar = () => {
 };
 
 const logout = async () => {
-    signOut();
-    canAccess();
-};
+    await signOut()
+    router.push({ name: 'login' })
+}
 
 import { onMounted, onBeforeUnmount } from 'vue';
 

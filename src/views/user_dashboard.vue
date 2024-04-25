@@ -1,14 +1,16 @@
 <template>
-    <navigation />
-    <div>
-        <h1>Boards</h1>
-    </div>
+	<navigation />
+	<div>
+		<h1>Boards</h1>
+	</div>
 </template>
 
 <script setup>
 import { watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
+
+const router = useRouter()
 
 const userStore = useUserStore()
 

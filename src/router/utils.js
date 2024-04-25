@@ -1,42 +1,42 @@
-import { useUserStore } from '@/stores/userStore'
-import { useTasksStore } from '@/stores/tasksStore'
+import { useUserStore } from "@/stores/userStore";
+import { useTasksStore } from "@/stores/tasksStore";
 
 export const generalBeforeEach = async (to, from, next) => {
-  const userStore = useUserStore()
+  const userStore = useUserStore();
 
   if (userStore.user === undefined) {
-    await userStore.fetchUser()
+    await userStore.fetchUser();
   }
 
   if (userStore.user) {
-    const tasksStore = useTasksStore()
+    const tasksStore = useTasksStore();
   }
 
-  next()
-}
+  next();
+};
 
 export const canAccess = async (to, from, next) => {
-  const userStore = useUserStore()
+  const userStore = useUserStore();
 
   if (userStore.user === undefined) {
-    await userStore.fetchUser()
+    await userStore.fetchUser();
   }
 
   if (!userStore.user) {
-    next({ name: 'login' })
+    next({ name: "login" });
   } else {
-    const tasksStore = useTasksStore()
-    next()
+    const tasksStore = useTasksStore();
+    next();
   }
-}
+};
 
 export const isUserLogged = async (to, from, next) => {
-  const userStore = useUserStore()
+  const userStore = useUserStore();
 
   if (userStore.user) {
-    const tasksStore = useTasksStore()
-    next({ name: 'tasks' })
+    const tasksStore = useTasksStore();
+    next({ name: "board" });
   } else {
-    next()
+    next();
   }
-}
+};
