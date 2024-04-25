@@ -1,9 +1,9 @@
 <template>
     <div class="modal" @click="closeModal">
         <div class="modal-content" @click.stop>
-            <h2>Add Task</h2>
+            <h2>Edit Task</h2>
             <input type="text" v-model="taskTitle" placeholder="Task Title" />
-            <input type="text" v-model="taskStatus" placeholder="todo" />
+            <textarea v-model="taskStatus" placeholder="Add description"></textarea>
             <!-- Other input fields for task details -->
             <button @click="saveTask">Save</button>
             <button @click="closeModal">Cancel</button>
@@ -11,12 +11,18 @@
     </div>
 </template>
 
+
 <script setup>
 import { ref } from 'vue';
 const emit = defineEmits(['saveTask', 'close'])
 
 const taskTitle = ref('');
-const taskStatus = ref('');
+const taskDescription = ref('');
+
+const _createTask = async () => {
+    await createTask(taskTitle.value)
+    taskTitle.value = ''
+}
 
 const saveTask = (event) => {
     emit('saveTask', { title: taskTitle.value });

@@ -2,10 +2,13 @@
     <div class="task" @click="editTask" @dragstart="dragStart">
         <span>{{ task.title }}</span>
         <button @click.stop="deleteTask">Delete</button>
+        <button @click.stop="editTask">Edit</button>
     </div>
 </template>
 
 <script setup>
+const emit = defineEmits(['delete', 'edit'])
+
 const props = defineProps({
     task: Object
 });

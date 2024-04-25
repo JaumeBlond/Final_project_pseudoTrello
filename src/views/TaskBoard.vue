@@ -3,7 +3,7 @@
   <div class="task-board">
     <div v-if="isMobileView" class="task-list-vertical" v-for="list in lists" :key="list.id">
       <h2>{{ list.title }}</h2>
-      <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask"
+      <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask" @edit="editTask"
         @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
         draggable="true" />
     </div>
@@ -11,13 +11,14 @@
       <div class="task-list" v-for="list in lists" :key="list.id" @dragover.prevent @drop="dropTask($event, list.id)"
         @touchmove.prevent @touchend="touchEnd($event, list.id)">
         <h2>{{ list.title }}</h2>
-        <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask"
+        <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask" @edit="editTask"
           @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
           draggable="true" />
       </div>
     </div>
     <button @click="openModal" class="add-task-button">Add Task</button>
-    <task-modal v-if="showModal" @save="saveTask" @close="closeModal" />
+    <create-task-modal v-if="showCreateModal" @save="saveTask" @close="closeModal" />
+    <modify-task-modal v-if="showModifyModal" @save="saveTask" @close="closeModal" />
   </div>
 </template>
 
@@ -27,7 +28,8 @@ import { ref, reactive, watch } from 'vue';
 import Task from "@/components/Task.vue";
 import { storeToRefs } from 'pinia'
 import navigation from "@/components/navigation.vue";
-import TaskModal from "@/components/taskModal.vue";
+import CreateTaskModal from "@/components/createTaskModal.vue";
+import ModifyTaskModal from "@/components/modifyTaskModal.vue";
 import { useTasksStore } from "@/stores/tasksStore";
 import { useUserStore } from "@/stores/userStore.js";
 
@@ -38,25 +40,24 @@ const { tasks } = storeToRefs(tasksStore)
 
 const tasksToShow = reactive([])
 
-let lists = reactive([
-  {
-    id: 1,
-    title: 'To Do',
-    status: 1,
-    tasks: []
-  },
-  {
-    id: 2,
-    title: 'In Progress',
-    status: 2,
-    tasks: []
-  },
-  {
-    id: 3,
-    title: 'Done',
-    status: 3,
-    tasks: []
-  }
+let lists = reactive([{
+  id: 1,
+  title: 'To Do',
+  status: 1,
+  tasks: []
+},
+{
+  id: 2,
+  title: 'In Progress',
+  status: 2,
+  tasks: []
+},
+{
+  id: 3,
+  title: 'Done',
+  status: 3,
+  tasks: []
+}
 ]);
 
 const sortTasksIntoLists = () => {
@@ -75,14 +76,16 @@ const sortTasksIntoLists = () => {
 };
 
 let isMobileView = false;
-let showModal = ref(false);
+let showCreateModal = ref(false);
+let showModifyModal = ref(false);
 
 const openModal = () => {
-  showModal.value = true;
+  showCreateModal.value = true;
 };
 
 const closeModal = () => {
-  showModal.value = false;
+  showCreateModal.value = false;
+  showModifyModal.value = false;
 };
 
 const saveTask = (task) => {
@@ -94,14 +97,18 @@ const generateUniqueId = () => {
   return Math.random().toString(36).substr(2, 9);
 };
 
-const editTask = (task) => {
-  // Implement edit task logic
-};
-
 const deleteTask = (taskId) => {
   lists.value.forEach(list => {
     list.tasks = list.tasks.filter(task => task.id !== taskId);
   });
+};
+
+const editTask = (task) => {
+  if (showModifyModal.value) {
+    showModifyModal.value = false
+  } else {
+    showModifyModal.value = true
+  }
 };
 
 const dragStart = (event, task, listId) => {

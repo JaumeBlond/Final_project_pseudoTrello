@@ -20,6 +20,7 @@
     </div>
 </template>
 
+
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { supabase } from "@/api/supabase";
@@ -39,12 +40,12 @@ let surname = ref('');
 let error = null;
 
 watch(
-    () => userStore.user,
-    (value) => {
-        if (value) {
-            router.push({ name: 'board' })
-        }
-    }
+	() => userStore.user,
+	(value) => {
+		if (value && userStore.isLoggedIn) {
+			router.push({ name: 'board' }); // Assuming 'boards' is the name of the route for the boards page
+		}
+	}
 )
 
 const userLogIn = () => {
