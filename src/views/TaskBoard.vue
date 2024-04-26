@@ -1,5 +1,6 @@
 <template>
-  <navigation />
+  <sidebar v-if="showSidebar" />
+  <navbar v-else />
   <div class="task-board">
     <div v-if="isMobileView" class="task-list-vertical" v-for="list in lists" :key="list.id">
       <h2>{{ list.title }}</h2>
@@ -27,7 +28,8 @@
 import { ref, reactive, watch } from 'vue';
 import Task from "@/components/Task.vue";
 import { storeToRefs } from 'pinia'
-import navigation from "@/components/navigation.vue";
+import navbar from "@/components/navbar.vue";
+import sidebar from "@/components/sidebar.vue";
 import CreateTaskModal from "@/components/createTaskModal.vue";
 import ModifyTaskModal from "@/components/modifyTaskModal.vue";
 import { useTasksStore } from "@/stores/tasksStore";
@@ -39,6 +41,10 @@ const userStore = useUserStore();
 const { tasks } = storeToRefs(tasksStore)
 
 const tasksToShow = reactive([])
+let isMobileView = ref(false);
+let showSidebar = ref(false);
+let showCreateModal = ref(false);
+let showModifyModal = ref(false);
 
 let lists = reactive([{
   id: 1,
@@ -75,9 +81,7 @@ const sortTasksIntoLists = () => {
   });
 };
 
-let isMobileView = false;
-let showCreateModal = ref(false);
-let showModifyModal = ref(false);
+
 
 const openModal = () => {
   showCreateModal.value = true;
@@ -176,7 +180,8 @@ const getStatusByListId = (listId) => {
 };
 
 const checkIsMobileView = () => {
-  isMobileView = window.innerWidth <= 425;
+  isMobileView.value = window.innerWidth <= 425;
+  showSidebar.value = window.innerWidth <= 630; // Adjust breakpoint as needed
 };
 
 import { onMounted, onBeforeUnmount } from 'vue';

@@ -14,7 +14,7 @@ const router = useRouter()
 
 const userStore = useUserStore()
 
-import navigation from "@/components/navigation.vue";
+import navigation from "@/components/navbar.vue";
 
 watch(
 	() => userStore.user,

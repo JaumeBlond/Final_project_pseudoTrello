@@ -1,5 +1,5 @@
 <template>
-    <div v-if="showSidebar">
+    <div>
         <button v-if="!isSidebarVisible" @click="toggleSidebar" class="sidebar-toggle">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -22,56 +22,27 @@
             </div>
         </div>
     </div>
-    <div v-else>
-        <nav class="navbar">
-            <div class="container">
-                <div class="brand">
-                    <router-link to="/">My Website</router-link>
-                </div>
-                <div class="navbar-links">
-                    <router-link to="/">Home</router-link>
-                    <router-link to="/about">About</router-link>
-                    <router-link to="/contact">Contact</router-link>
-                    <button @click="logout" class="logout-button">Logout</button>
-                </div>
-            </div>
-        </nav>
-    </div>
 </template>
 
 <script setup>
+import { ref, reactive, watch } from 'vue';
+
 import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'vue-router'
-
 const { signOut } = useUserStore();
 const router = useRouter()
-let isSidebarVisible = false;
-let showSidebar = false;
-
-const toggleSidebar = () => {
-    isSidebarVisible = !isSidebarVisible;
-};
-
-const shouldShowSidebar = () => {
-    showSidebar = window.innerWidth <= 500; // Adjust breakpoint as needed
-};
+let isSidebarVisible = ref(false);
 
 const logout = async () => {
     await signOut()
     router.push({ name: 'login' })
 }
 
-import { onMounted, onBeforeUnmount } from 'vue';
-
-onMounted(() => {
-    shouldShowSidebar();
-    window.addEventListener('resize', shouldShowSidebar);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('resize', shouldShowSidebar);
-});
+const toggleSidebar = () => {
+    isSidebarVisible.value = !isSidebarVisible.value;
+};
 </script>
+
 
 <style scoped>
 .sidebar {
