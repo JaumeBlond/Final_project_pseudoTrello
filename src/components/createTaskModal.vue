@@ -2,10 +2,17 @@
     <div class="modal" @click="closeModal">
         <div class="modal-content" @click.stop>
             <h2>Add Task</h2>
-            <input type="text" v-model="taskTitle" placeholder="Task Title" />
-            <input type="text" v-model="taskDescription" placeholder="todo" />
+            <div>
+                <input type="text" v-model="taskTitle" placeholder="Task Title" />
+                <textarea type="text" v-model="taskDescription" placeholder="add anything"> </textarea>
+                <select name="Priority" v-model="taskPriority">
+                    <option value="0">Low</option>
+                    <option value="1">Medium</option>
+                    <option value="2">High</option>
+                </select>
+            </div>
             <!-- Other input fields for task details -->
-            <button @click.prevent.stop="_createTask">Save</button>
+            <button @click.prevent.stop="saveTask">Save</button>
             <button @click="closeModal">Cancel</button>
         </div>
     </div>
@@ -17,14 +24,10 @@ const emit = defineEmits(['saveTask', 'close'])
 
 const taskTitle = ref('');
 const taskDescription = ref('');
-
-const _createTask = async () => {
-	await createTask(taskTitle.value)
-	taskTitle.value = ''
-}
+const taskPriority = ref('')
 
 const saveTask = (event) => {
-    emit('saveTask', { title: taskTitle.value });
+    emit('saveNewTask', { title: taskTitle.value, description: taskDescription.value, priority: taskPriority.value });
     closeModal();
 };
 
@@ -50,13 +53,27 @@ const closeModal = () => {
 .modal-content {
     background-color: #fff;
     padding: 20px;
+    padding-left: 60px;
     border-radius: 5px;
+    max-width: 75%;
 }
 
-input {
-    width: 100%;
+.modal-content div {
+    margin: 40px 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+input,
+textarea {
+    width: 75%;
     padding: 8px;
     margin-bottom: 10px;
+}
+
+select {
+    width: 25%;
+    height: 35px
 }
 
 button {

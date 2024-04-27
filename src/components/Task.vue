@@ -1,6 +1,12 @@
 <template>
     <div class="task" @click="editTask" @dragstart="dragStart">
-        <span>{{ task.title }}</span>
+        <div>
+            <span>{{ task.title }}</span>
+            <div>{{ task.description }}</div>
+            <div>
+                <div>{{ task.priority }}</div>
+            </div>
+        </div>
         <button @click.stop="deleteTask">Delete</button>
         <button @click.stop="editTask">Edit</button>
     </div>
@@ -27,10 +33,12 @@ const dragStart = (event) => {
 </script>
 
 
-<style scoped>
+<style>
 .task {
-    background-color: #f4f4f4;
+    background-color: #ffffff;
     padding: 10px;
+    max-width: 80%;
+    margin: auto;
     margin-bottom: 10px;
     cursor: pointer;
 }

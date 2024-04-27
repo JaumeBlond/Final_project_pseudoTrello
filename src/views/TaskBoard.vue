@@ -1,25 +1,31 @@
 <template>
-  <sidebar v-if="showSidebar" />
-  <navbar v-else />
-  <div class="task-board">
-    <div v-if="isMobileView" class="task-list-vertical" v-for="list in lists" :key="list.id">
-      <h2>{{ list.title }}</h2>
-      <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask" @edit="editTask"
-        @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
-        draggable="true" />
+  <div>
+    <div class="topBanner">
+      <sidebar v-if="showSidebar" />
+      <navbar v-else />
+      <button @click="openModal" class="add-task-button">Add Task</button>
     </div>
-    <div v-else class="task-list-horizontal">
-      <div class="task-list" v-for="list in lists" :key="list.id" @dragover.prevent @drop="dropTask($event, list.id)"
-        @touchmove.prevent @touchend="touchEnd($event, list.id)">
+
+    <div class="task-board">
+      <div v-if="isMobileView" class="task-list-vertical" v-for="list in lists" :key="list.id">
         <h2>{{ list.title }}</h2>
         <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask" @edit="editTask"
           @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
           draggable="true" />
       </div>
+      <div v-else class="task-list-horizontal">
+        <div class="task-list" v-for="list in lists" :key="list.id" @dragover.prevent @drop="dropTask($event, list.id)"
+          @touchmove.prevent @touchend="touchEnd($event, list.id)">
+          <h2>{{ list.title }}</h2>
+          <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask" @edit="editTask"
+            @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
+            draggable="true" />
+        </div>
+      </div>
+
+      <create-task-modal v-if="showCreateModal" @saveNewTask="saveNewTask" @close="closeModal" />
+      <modify-task-modal v-if="showModifyModal" @save="saveTask" @close="closeModal" />
     </div>
-    <button @click="openModal" class="add-task-button">Add Task</button>
-    <create-task-modal v-if="showCreateModal" @save="saveTask" @close="closeModal" />
-    <modify-task-modal v-if="showModifyModal" @save="saveTask" @close="closeModal" />
   </div>
 </template>
 
@@ -40,7 +46,7 @@ const userStore = useUserStore();
 
 const { tasks } = storeToRefs(tasksStore)
 
-const tasksToShow = reactive([])
+let tasksToShow = reactive([])
 let isMobileView = ref(false);
 let showSidebar = ref(false);
 let showCreateModal = ref(false);
@@ -81,8 +87,6 @@ const sortTasksIntoLists = () => {
   });
 };
 
-
-
 const openModal = () => {
   showCreateModal.value = true;
 };
@@ -97,15 +101,29 @@ const saveTask = (task) => {
   closeModal(); // Close modal after saving task
 };
 
+const saveNewTask = async (task) => {
+  await tasksStore.createTask(task.title, task.description, task.priority)
+  updateTasks()
+  closeModal(); // Close modal after saving task
+};
+
+
 const generateUniqueId = () => {
   return Math.random().toString(36).substr(2, 9);
 };
 
-const deleteTask = (taskId) => {
-  lists.value.forEach(list => {
-    list.tasks = list.tasks.filter(task => task.id !== taskId);
-  });
+const deleteTask = async (taskId) => {
+  await tasksStore.removeTask(taskId)
+  updateTasks()
 };
+
+const updateTasks = async () => {
+  const user = userStore.user.id;
+  tasksToShow = reactive([]);
+  await tasksStore.fetchTasks(user);
+  tasksToShow.value = await tasks.value
+  sortTasksIntoLists()
+}
 
 const editTask = (task) => {
   if (showModifyModal.value) {
@@ -224,12 +242,16 @@ onBeforeUnmount(() => {
 .task-list {
   flex: 1;
   margin: 0 10px;
+  width: 100%;
+  background-color: darkgray;
 }
 
 .task-list-vertical {
   display: flex;
   flex-direction: column;
   width: 100%;
+  background-color: darkgray;
+  min-height: 200px;
 }
 
 .task-list-horizontal {
@@ -262,7 +284,7 @@ onBeforeUnmount(() => {
   }
 
   .task {
-    min-height: 300px;
+    min-height: 280px;
   }
 }
 
@@ -277,6 +299,10 @@ onBeforeUnmount(() => {
 }
 
 .task-board {
+  display: flex;
+}
+
+.topBanner {
   display: flex;
 }
 </style>

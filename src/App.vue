@@ -31,6 +31,19 @@ export default {
   margin: auto;
 }
 
+#main div {
+  width: 100%;
+}
+
+.task-board {
+  padding-top: 30px;
+  width: 100%;
+}
+
+.navbar {
+  width: 100%;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -38,6 +51,6 @@ export default {
 
 .task-list {
   flex: 1;
-  margin: 0 10px;
+  margin: 20px;
 }
 </style>

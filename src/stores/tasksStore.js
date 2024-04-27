@@ -1,6 +1,13 @@
 import { ref, isProxy, toRaw } from "vue";
 import { defineStore } from "pinia";
-import { fetchAllTasks } from "@/api/tasksApi";
+import {
+  createNewTask,
+  removeTaskById,
+  updateTaskById,
+  fetchAllTasks,
+} from "@/api/tasksApi";
+
+import { useUserStore } from "@/stores/userStore";
 
 export const useTasksStore = defineStore("tasks", () => {
   // State
@@ -8,10 +15,9 @@ export const useTasksStore = defineStore("tasks", () => {
 
   // Getters
 
-
   // Actions
   function fetchTasks(user) {
-    console.log(user)
+    console.log(user);
     try {
       tasks.value = fetchAllTasks(user);
     } catch (error) {
@@ -19,35 +25,37 @@ export const useTasksStore = defineStore("tasks", () => {
     }
   }
 
-   async function createTask(taskTitle) {
+  async function createTask(taskTitle, taskDescription, taskPriority) {
     try {
       const {
-        user: { id }
-      } = useUserStore()
-      const newTask = await createNewTask({ title: taskTitle, user_id: id })
-
-      tasks.value.push(newTask)
+        user: { id },
+      } = useUserStore();
+      const newTask = await createNewTask({
+        title: taskTitle,
+        description: taskDescription,
+        priority: taskPriority,
+        user_id: id,
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   async function updateTask(taskId, task) {
     try {
-      await updateTaskById(taskId, task)
-      const taskIndex = tasks.value.findIndex((task) => task.id === taskId)
-      tasks.value[taskIndex] = task
+      await updateTaskById(taskId, task);
+      const taskIndex = tasks.value.findIndex((task) => task.id === taskId);
+      tasks.value[taskIndex] = task;
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   async function removeTask(taskId) {
     try {
-      await removeTaskById(taskId)
-      tasks.value = tasks.value.filter((task) => task.id !== taskId)
+      await removeTaskById(taskId);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
