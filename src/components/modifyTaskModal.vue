@@ -2,9 +2,18 @@
     <div class="modal" @click="closeModal">
         <div class="modal-content" @click.stop>
             <h2>Edit Task</h2>
-            <input type="text" v-model="taskTitle" placeholder="Task Title" />
-            <textarea v-model="taskStatus" placeholder="Add description"></textarea>
-            <!-- Other input fields for task details -->
+            <input type="text" v-model="taskTitle" />
+            <textarea v-model="taskDescription">{{ task.description }}</textarea>
+            <select name="Priority" v-model="taskPriority">
+                <option value="0">Low</option>
+                <option value="1">Medium</option>
+                <option value="2">High</option>
+            </select>
+            <select name="Status" v-model="taskStatus">
+                <option value="1">To Do</option>
+                <option value="2">In progress</option>
+                <option value="3">Done</option>
+            </select>
             <button @click="saveTask">Save</button>
             <button @click="closeModal">Cancel</button>
         </div>
@@ -13,25 +22,27 @@
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 const emit = defineEmits(['saveTask', 'close'])
 
-const taskTitle = ref('');
-const taskDescription = ref('');
+const props = defineProps({
+    task: Object
+});
 
-const _createTask = async () => {
-    await createTask(taskTitle.value)
-    taskTitle.value = ''
-}
+const taskTitle = ref(props.task.title);
+const taskDescription = ref(props.task.description);
+const taskStatus = ref(props.task.status);
+const taskPriority = ref(props.task.priority);
 
 const saveTask = (event) => {
-    emit('saveTask', { title: taskTitle.value });
+    emit('saveTask', { title: taskTitle.value, description: taskDescription.value, priority: taskPriority.value, status: taskStatus.value, taskId: props.task.id });
     closeModal();
 };
 
 const closeModal = () => {
     emit('close');
 };
+
 </script>
 
 <style scoped>
@@ -68,5 +79,10 @@ button {
 
 button:last-child {
     margin-right: 0;
+}
+
+select {
+    height: 40px;
+    width: 400px;
 }
 </style>

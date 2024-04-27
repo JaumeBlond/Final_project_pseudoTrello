@@ -38,7 +38,13 @@ export const removeTaskById = async (taskId) => {
 export const updateTaskById = async (taskId, task) => {
   const { error } = await supabase
     .from("tasks")
-    .update({ ...task })
+    .update({
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      priority: task.priority,
+      updated_at: new Date().toISOString().toLocaleString("zh-TW"),
+    })
     .eq("id", taskId);
 
   if (error) {
@@ -49,7 +55,10 @@ export const updateTaskById = async (taskId, task) => {
 export const updateTaskStatusById = async (taskId, taskStatus) => {
   const { error } = await supabase
     .from("tasks")
-    .update({ status: taskStatus })
+    .update({
+      status: taskStatus,
+      updated_at: new Date().toISOString().toLocaleString("zh-TW"),
+    })
     .eq("id", taskId);
 
   if (error) {

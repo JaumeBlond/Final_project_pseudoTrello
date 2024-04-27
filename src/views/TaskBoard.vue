@@ -24,7 +24,7 @@
       </div>
 
       <create-task-modal v-if="showCreateModal" @saveNewTask="saveNewTask" @close="closeModal" />
-      <modify-task-modal v-if="showModifyModal" @save="saveTask" @close="closeModal" />
+      <modify-task-modal v-if="showModifyModal" @saveTask="saveTask" @close="closeModal" :task="taskOnEdit"/>
     </div>
   </div>
 </template>
@@ -51,6 +51,7 @@ let isMobileView = ref(false);
 let showSidebar = ref(false);
 let showCreateModal = ref(false);
 let showModifyModal = ref(false);
+let taskOnEdit = ref([]);
 
 let lists = reactive([{
   id: 1,
@@ -96,8 +97,9 @@ const closeModal = () => {
   showModifyModal.value = false;
 };
 
-const saveTask = (task) => {
-  lists.value[0].tasks.push({ id: generateUniqueId(), ...task, status: 'todo' });
+const saveTask = async (task) => {
+  await tasksStore.updateTask(task.taskId, task)
+  updateTasks()
   closeModal(); // Close modal after saving task
 };
 
@@ -125,11 +127,8 @@ const updateTasks = async () => {
 }
 
 const editTask = (task) => {
-  if (showModifyModal.value) {
-    showModifyModal.value = false
-  } else {
-    showModifyModal.value = true
-  }
+  showModifyModal.value = !showModifyModal.value
+  taskOnEdit = task
 };
 
 const dragStart = (event, task, listId) => {
@@ -151,7 +150,7 @@ const dropTask = async (event, targetListId) => {
     const taskId = data.taskId;
     const sourceListId = lists.findIndex(list => list.tasks.some(task => task.id === taskId));
     const targetList = lists.find(list => list.id === targetListId);
-    await tasksStore.updateTaskStatus(taskId,targetListId)
+    await tasksStore.updateTaskStatus(taskId, targetListId)
     if (sourceListId !== -1 && targetList) {
       const sourceList = lists[sourceListId];
       const taskIndex = sourceList.tasks.findIndex(task => task.id === taskId);
@@ -163,6 +162,7 @@ const dropTask = async (event, targetListId) => {
       }
     }
   }
+  updateTasks()
 };
 
 const touchEnd = (event, targetListId) => {
