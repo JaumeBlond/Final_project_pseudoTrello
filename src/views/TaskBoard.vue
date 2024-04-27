@@ -107,7 +107,6 @@ const saveNewTask = async (task) => {
   closeModal(); // Close modal after saving task
 };
 
-
 const generateUniqueId = () => {
   return Math.random().toString(36).substr(2, 9);
 };
@@ -145,14 +144,14 @@ const touchStart = (event, task, listId) => {
   }
 };
 
-const dropTask = (event, targetListId) => {
+const dropTask = async (event, targetListId) => {
   if (event) {
     event.preventDefault();
     const data = JSON.parse(event.dataTransfer.getData("text/plain"));
     const taskId = data.taskId;
     const sourceListId = lists.findIndex(list => list.tasks.some(task => task.id === taskId));
     const targetList = lists.find(list => list.id === targetListId);
-
+    await tasksStore.updateTaskStatus(taskId,targetListId)
     if (sourceListId !== -1 && targetList) {
       const sourceList = lists[sourceListId];
       const taskIndex = sourceList.tasks.findIndex(task => task.id === taskId);
@@ -161,7 +160,6 @@ const dropTask = (event, targetListId) => {
         task.status = targetList.status;
         targetList.tasks.push(task);
         // Ensure reactivity
-        lists.value = [...lists.value];
       }
     }
   }

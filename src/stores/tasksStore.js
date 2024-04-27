@@ -5,6 +5,7 @@ import {
   removeTaskById,
   updateTaskById,
   fetchAllTasks,
+  updateTaskStatusById,
 } from "@/api/tasksApi";
 
 import { useUserStore } from "@/stores/userStore";
@@ -51,6 +52,14 @@ export const useTasksStore = defineStore("tasks", () => {
     }
   }
 
+  async function updateTaskStatus(taskId, taskStatus) {
+    try {
+      await updateTaskStatusById(taskId, taskStatus);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async function removeTask(taskId) {
     try {
       await removeTaskById(taskId);
@@ -68,5 +77,6 @@ export const useTasksStore = defineStore("tasks", () => {
     createTask,
     removeTask,
     updateTask,
+    updateTaskStatus,
   };
 });
