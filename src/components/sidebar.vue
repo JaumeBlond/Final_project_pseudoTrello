@@ -7,7 +7,7 @@
             </svg>
         </button>
 
-        <div class="sidebar" :class="{ 'visible': isSidebarVisible }">
+        <div class="sidebar w-1/2" :class="{ 'visible': isSidebarVisible }">
             <button @click="toggleSidebar" class="sidebar-close">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 10 10" fill="currentColor">
                     <path fill-rule="evenodd"
@@ -25,18 +25,18 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue';
-
+import { ref } from 'vue';
 import { useUserStore } from '@/stores/userStore';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+
 const { signOut } = useUserStore();
-const router = useRouter()
+const router = useRouter();
 let isSidebarVisible = ref(false);
 
 const logout = async () => {
-    await signOut()
-    router.push({ name: 'login' })
-}
+    await signOut();
+    router.push({ name: 'login' });
+};
 
 const toggleSidebar = () => {
     isSidebarVisible.value = !isSidebarVisible.value;
@@ -46,7 +46,6 @@ const toggleSidebar = () => {
 
 <style scoped>
 .sidebar {
-    width: 200px;
     background-color: #f0f0f0;
     position: fixed;
     top: 0;

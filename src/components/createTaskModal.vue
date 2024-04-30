@@ -1,32 +1,38 @@
 <template>
-    <div class="modal" @click="closeModal">
-        <div class="modal-content" @click.stop>
-            <h2>Add Task</h2>
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" @click="closeModal">
+        <div class="bg-white rounded-lg p-6 w-3/4" @click.stop>
+            <h2 class="text-xl font-bold mb-4">Add Task</h2>
             <div>
-                <input type="text" v-model="taskTitle" placeholder="Task Title" />
-                <textarea type="text" v-model="taskDescription" placeholder="add anything"> </textarea>
-                <select name="Priority" v-model="taskPriority">
+                <input type="text" v-model="taskTitle" placeholder="Task Title"
+                    class="w-full px-4 py-2 mb-4 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500" />
+                <textarea v-model="taskDescription" placeholder="Add anything"
+                    class="w-full px-4 py-2 mb-4 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"></textarea>
+                <br>
+                <select name="Priority" v-model="taskPriority"
+                    class="w-1/4 px-4 py-2 mb-4 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500">
                     <option value="0">Low</option>
                     <option value="1">Medium</option>
                     <option value="2">High</option>
                 </select>
             </div>
-            <!-- Other input fields for task details -->
-            <button @click.prevent.stop="saveTask">Save</button>
-            <button @click="closeModal">Cancel</button>
+            <button @click.prevent.stop="saveTask"
+                class="px-4 py-2 bg-blue-500 text-white rounded-md mr-2 cursor-pointer">Save</button>
+            <button @click="closeModal"
+                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md cursor-pointer">Cancel</button>
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const emit = defineEmits(['saveTask', 'close'])
+
+const emit = defineEmits(['saveNewTask', 'close']);
 
 const taskTitle = ref('');
 const taskDescription = ref('');
-const taskPriority = ref('')
+const taskPriority = ref('');
 
-const saveTask = (event) => {
+const saveTask = () => {
     emit('saveNewTask', { title: taskTitle.value, description: taskDescription.value, priority: taskPriority.value });
     closeModal();
 };
@@ -36,53 +42,4 @@ const closeModal = () => {
 };
 </script>
 
-<style scoped>
-/* Styles for the modal */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    padding-left: 60px;
-    border-radius: 5px;
-    max-width: 75%;
-}
-
-.modal-content div {
-    margin: 40px 0px;
-    display: flex;
-    flex-direction: column;
-}
-
-input,
-textarea {
-    width: 75%;
-    padding: 8px;
-    margin-bottom: 10px;
-}
-
-select {
-    width: 25%;
-    height: 35px
-}
-
-button {
-    padding: 8px 16px;
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-button:last-child {
-    margin-right: 0;
-}
-</style>
+<style scoped></style>

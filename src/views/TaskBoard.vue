@@ -1,22 +1,29 @@
 <template>
-  <div>
-    <div class="topBanner">
-      <sidebar v-if="showSidebar" />
-      <navbar v-else />
-      <button @click="openModal" class="add-task-button">Add Task</button>
+  <div class="topBanner flex items-center">
+    <sidebar v-if="showSidebar" />
+    <navbar v-else />
+  </div>
+  <div class="w-11/12 flex flex-col bg-gray-100 mt-10 rounded-md w-11/12 mx-auto">
+    <div class="flex justify-between">
+      <div></div>
+      <button @click="openModal"
+        class="add-task-button px-2 py-2 bg-blue-500 text-white rounded-md mt-6 mr-6 cursor-pointer w-24 pl-120 right 0">Add
+        Task</button>
     </div>
 
-    <div class="task-board">
-      <div v-if="isMobileView" class="task-list-vertical" v-for="list in lists" :key="list.id">
-        <h2>{{ list.title }}</h2>
+    <div class="task-board-container w-11/12 mx-auto p-4 rounded-lg flex flex-wrap justify-between flex-col">
+      <div v-if="isMobileView" class="task-list flex flex-col items-center bg-slate-300	pb-20 rounded-md w-full pt-6"
+        v-for="list in lists" :key="list.id">
+        <h2 class="font-bold text-lg sm:text-xl md:text-2xl">{{ list.title }}</h2>
         <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask" @edit="editTask"
           @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
-          draggable="true" />
+          draggable="false" />
       </div>
-      <div v-else class="task-list-horizontal">
-        <div class="task-list" v-for="list in lists" :key="list.id" @dragover.prevent @drop="dropTask($event, list.id)"
-          @touchmove.prevent @touchend="touchEnd($event, list.id)">
-          <h2>{{ list.title }}</h2>
+      <div v-else class="task-list-horizontal flex flex-wrap justify-between  w-full">
+        <div class="task-list flex flex-col items-center bg-slate-300	pb-20 rounded-md w-full pt-6"
+          v-for="list in lists" :key="list.id" @dragover.prevent @drop="dropTask($event, list.id)" @touchmove.prevent
+          @touchend="touchEnd($event, list.id)">
+          <h2 class="font-bold text-lg sm:text-xl md:text-2xl">{{ list.title }}</h2>
           <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask" @edit="editTask"
             @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
             draggable="true" />
@@ -24,11 +31,10 @@
       </div>
 
       <create-task-modal v-if="showCreateModal" @saveNewTask="saveNewTask" @close="closeModal" />
-      <modify-task-modal v-if="showModifyModal" @saveTask="saveTask" @close="closeModal" :task="taskOnEdit"/>
+      <modify-task-modal v-if="showModifyModal" @saveTask="saveTask" @close="closeModal" :task="taskOnEdit" />
     </div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, reactive, watch } from 'vue';
@@ -196,8 +202,8 @@ const getStatusByListId = (listId) => {
 };
 
 const checkIsMobileView = () => {
-  isMobileView.value = window.innerWidth <= 425;
-  showSidebar.value = window.innerWidth <= 630; // Adjust breakpoint as needed
+  isMobileView.value = window.innerWidth <= 850;
+  showSidebar.value = window.innerWidth <= 850; // Adjust breakpoint as needed
 };
 
 import { onMounted, onBeforeUnmount } from 'vue';
@@ -228,79 +234,3 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', checkIsMobileView);
 });
 </script>
-
-<style scoped>
-.task-board {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  margin: auto;
-}
-
-.task-list {
-  flex: 1;
-  margin: 0 10px;
-  width: 100%;
-  background-color: darkgray;
-}
-
-.task-list-vertical {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  background-color: darkgray;
-  min-height: 200px;
-}
-
-.task-list-horizontal {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  width: 100%;
-  margin: 0;
-}
-
-@media only screen and (min-width: 768px) {
-  .task-list-horizontal .task-list {
-    flex-basis: calc(33.33% - 20px);
-  }
-}
-
-@media only screen and (min-width: 768px) {
-  .task-board {
-    font-size: 18px;
-  }
-
-  .task {
-    min-height: 150px;
-  }
-}
-
-@media only screen and (min-width: 1024px) {
-  .task-board {
-    font-size: 20px;
-  }
-
-  .task {
-    min-height: 280px;
-  }
-}
-
-@media only screen and (min-width: 2500px) {
-  .task-board {
-    font-size: 32px;
-  }
-
-  .task {
-    max-height: 600px;
-  }
-}
-
-.task-board {
-  display: flex;
-}
-
-.topBanner {
-  display: flex;
-}
-</style>

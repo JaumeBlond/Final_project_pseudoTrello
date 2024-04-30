@@ -1,5 +1,5 @@
 <template>
-  <div id="main">
+  <div id="main" class="w-screen mt-0 place-content-center items-center">
     <router-view />
   </div>
 </template>
@@ -12,27 +12,19 @@ export default {
 </script>
 
 <style>
+@import './style.css';
+
 #app {
   font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: 100%;
   align-items: flex-start;
-  padding-top: 30px;
   margin: auto;
 }
 
 #main {
   font-family: Arial, sans-serif;
-  display: flex;
-  width: 100%;
-  align-items: flex-start;
-  padding-top: 30px;
-  margin: auto;
-}
-
-#main div {
-  width: 100%;
 }
 
 .task-board {
