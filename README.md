@@ -97,7 +97,3 @@ The project uses environment variables for configuration. Create a `.env` file a
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Feel free to customize the README file further based on your project's specific requirements and additional information you'd like to include.
