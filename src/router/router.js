@@ -12,7 +12,7 @@ const routes = [
     name: "home",
     component: TaskBoard,
     redirect: () => {
-      return { name: "home" };
+      return { name: "board" };
     },
     beforeEnter: [canAccess],
     children: [
