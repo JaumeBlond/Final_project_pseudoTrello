@@ -1,5 +1,5 @@
 <template>
-  <div id="main" class="w-screen mt-0 place-content-center items-center bg-gray-100">
+  <div id="main" class="w-screen mt-0 items-center bg-gray-100 h-screen">
     <router-view />
   </div>
 </template>
@@ -19,6 +19,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   align-items: flex-start;
   margin: auto;
 }

@@ -4,84 +4,22 @@
     <navbar v-else />
   </div>
   <div class="app-advanced p-10">
-    <form @submit="handleSubmit" method="POST" class="w-1/2 mx-auto mt-5">
+    <form @submit.prevent="handleSubmit" method="POST" class="w-2/3 mx-auto mt-5">
       <div class="mb-3 pt-0">
-        <input type="text" placeholder="Your name" name="name" class="
-            px-3
-            py-3
-            placeholder-gray-400
-            text-gray-600
-            relative
-            bg-white bg-white
-            rounded
-            text-sm
-            border-0
-            shadow
-            outline-none
-            focus:outline-none
-            focus:ring
-            w-full
-          " required />
+        <input v-model="formData.name" type="text" placeholder="Your name" name="name" class="input-field" required />
       </div>
 
       <div class="mb-3 pt-0">
-        <input type="email" placeholder="Email" name="email" class="
-            px-3
-            py-3
-            placeholder-gray-400
-            text-gray-600
-            relative
-            bg-white bg-white
-            rounded
-            text-sm
-            border-0
-            shadow
-            outline-none
-            focus:outline-none
-            focus:ring
-            w-full
-          " required />
+        <input v-model="formData.email" type="email" placeholder="Email" name="email" class="input-field" required />
       </div>
 
       <div class="mb-3 pt-0">
-        <textarea placeholder="Your message" name="message" class="
-            px-3
-            py-3
-            placeholder-gray-400
-            text-gray-600
-            relative
-            bg-white bg-white
-            rounded
-            text-sm
-            border-0
-            shadow
-            outline-none
-            focus:outline-none
-            focus:ring
-            w-full
-          " required />
+        <textarea v-model="formData.message" placeholder="Your message" name="message" class="input-field" required />
       </div>
 
       <div class="mb-3 pt-0">
         <button class="
-            bg-blue-500
-            text-white
-            active:bg-blue-600
-            font-bold
-            uppercase
-            text-sm
-            px-6
-            py-3
-            rounded
-            shadow
-            hover:shadow-lg
-            outline-none
-            focus:outline-none
-            mr-1
-            mb-1
-            ease-linear
-            transition-all
-            duration-150
+            submit-btn
           " type="submit">
           Send a message
         </button>
@@ -100,10 +38,17 @@ import { ref } from 'vue';
 import navbar from "@/components/navbar.vue";
 import sidebar from "@/components/sidebar.vue";
 import { onMounted, onBeforeUnmount } from 'vue';
+import { supabase } from '@/api/supabase';
+
 
 let isMobileView = ref(false);
 let showSidebar = ref(false);
-
+let submitted = ref(false);
+let formData = ref({
+  name: '',
+  email: '',
+  message: ''
+});
 
 const checkIsMobileView = () => {
   isMobileView.value = window.innerWidth <= 850;
@@ -119,10 +64,44 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', checkIsMobileView);
 });
 
-const handleSubmit = () => {
-
-  setTimeout(() => {
-    this.submitted = true;
-  }, 100);
-}
+const handleSubmit = async () => {
+  try {
+    const { data, error } = await supabase.from('messages').insert([formData.value]);
+    if (error) {
+      throw error;
+    }
+    submitted.value = true;
+  } catch (error) {
+    console.error('Error submitting message:', error.message);
+  }
+};
 </script>
+
+<style scoped>
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.submit-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+}
+</style>

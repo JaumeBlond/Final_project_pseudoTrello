@@ -3,7 +3,7 @@
     <sidebar v-if="showSidebar" />
     <navbar v-else />
   </div>
-  <div class="w-11/12 flex flex-col bg-neutral-200	 mt-10 rounded-md w-11/12 mx-auto">
+  <div class="w-11/12 flex flex-col bg-neutral-200 mt-10 rounded-md w-11/12 mx-auto">
     <div class="flex justify-between">
       <div></div>
       <button @click="openModal"
