@@ -1,14 +1,10 @@
 import { useUserStore } from '@/stores/userStore'
-import { useTasksStore } from '@/stores/tasksStore'
 
 export const generalBeforeEach = async (to, from, next) => {
   const userStore = useUserStore()
 
   if (userStore.user === undefined) {
     await userStore.fetchUser()
-  }
-
-  if (userStore.user) {
   }
 
   next()
