@@ -1,5 +1,5 @@
 <template>
-  <div id="main" class="w-screen mt-0 place-content-center items-center">
+  <div id="main" class="w-screen mt-0 place-content-center items-center bg-gray-100">
     <router-view />
   </div>
 </template>

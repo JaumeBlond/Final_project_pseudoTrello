@@ -3,7 +3,7 @@
     <sidebar v-if="showSidebar" />
     <navbar v-else />
   </div>
-  <div class="w-11/12 flex flex-col bg-gray-100 mt-10 rounded-md w-11/12 mx-auto">
+  <div class="w-11/12 flex flex-col bg-neutral-200	 mt-10 rounded-md w-11/12 mx-auto">
     <div class="flex justify-between">
       <div></div>
       <button @click="openModal"
@@ -202,8 +202,8 @@ const getStatusByListId = (listId) => {
 };
 
 const checkIsMobileView = () => {
-  isMobileView.value = window.innerWidth <= 850;
-  showSidebar.value = window.innerWidth <= 850; // Adjust breakpoint as needed
+  isMobileView.value = window.innerWidth <= 927;
+  showSidebar.value = window.innerWidth <= 927; // Adjust breakpoint as needed
 };
 
 import { onMounted, onBeforeUnmount } from 'vue';
