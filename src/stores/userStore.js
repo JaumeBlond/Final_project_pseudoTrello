@@ -22,19 +22,11 @@ export const useUserStore = defineStore('userStore', {
     }
 
     async function signUp(email, password) {
-      try {
-        user.value = await createNewUser(email, password)
-      } catch (error) {
-        console.error(error)
-      }
+      user.value = await createNewUser(email, password)
     }
 
     async function signIn(email, password) {
-      try {
-        user.value = await logIn(email, password)
-      } catch (error) {
-        console.error(error)
-      }
+      user.value = await logIn(email, password)
     }
 
     async function signInWithProvider(provider) {

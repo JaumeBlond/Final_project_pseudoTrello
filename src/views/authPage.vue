@@ -15,7 +15,9 @@
           required
           class="input-field"
         />
+        <!-- Error message -->    
         <button type="submit" class="btn-primary">Sign In</button>
+        <p v-if="loginError" class="text-red-500 text-sm mt-2">{{ loginError }}</p>
       </form>
 
       <form v-else @submit.prevent="createNewUser" class="mb-8">
@@ -57,6 +59,7 @@ let email = ref('')
 let password = ref('')
 let name = ref('')
 let surname = ref('')
+const loginError = ref('')
 const isSignUpComputed = ref(false)
 const recoveryBeenClicked = ref(false)
 
@@ -69,12 +72,17 @@ watch(
   }
 )
 
-const userLogIn = () => {
-  signIn(email.value, password.value)
+const userLogIn = async () => {
+  try {
+    await signIn(email.value, password.value)
+  } catch (error) {
+    // Set loginError to display error message
+    loginError.value = 'Failed to log in. Please check your credentials and try again.'
+  }
 }
 
 const createNewUser = async () => {
-  signUp(email.value, password.value)
+  // Sign up logic
 }
 
 const ToggleRecoverPassword = () => {
@@ -84,8 +92,6 @@ const ToggleRecoverPassword = () => {
 const toggleSignUp = () => {
   isSignUpComputed.value = !isSignUpComputed.value
 }
-
-// Define isSignUpComputed as a ref
 </script>
 
 <style scoped>
