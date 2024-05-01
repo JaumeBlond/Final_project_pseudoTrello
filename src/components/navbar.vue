@@ -8,7 +8,7 @@
       </div>
       <div class="navbar-links flex items-center mx-6 w-1/4 justify-around">
         <router-link to="/board" class="navbar-link">Home</router-link>
-        <router-link to="/about" class="navbar-link">About</router-link>
+        <router-link to="/about" class="navbar-link">fassdafas</router-link>
         <router-link to="/contact" class="navbar-link">Contact</router-link>
         <button
           @click="logout"
