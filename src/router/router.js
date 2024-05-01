@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { generalBeforeEach, canAccess, isUserLogged } from "@/router/utils";
 import TaskBoard from "@/views/TaskBoard.vue";
-import auth from "@/views/auth.vue";
-import About from "@/views/about.vue";
+import auth from "@/views/authPage.vue";
+import About from "@/views/aboutPage.vue";
 import ContactPage from "@/views/contactPage.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
 

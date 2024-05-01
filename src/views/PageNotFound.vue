@@ -10,39 +10,36 @@
         Oops! It looks like you've ventured into uncharted territory.
       </p>
       <p class="text-lg text-gray-800">
-        But don't worry, our team of explorers is working hard to find the right
-        path for you.
+        But don't worry, our team of explorers is working hard to find the right path for you.
       </p>
       <img src="@/assets/error.webp" alt="404 Image" class="mt-8 max-w-xs" />
-      <router-link to="/board" class="text-blue-600 mt-8"
-        >Return to Home</router-link
-      >
+      <router-link to="/board" class="text-blue-600 mt-8">Return to Home</router-link>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import navbar from "@/components/navbar.vue";
-import sidebar from "@/components/sidebar.vue";
-import { onMounted, onBeforeUnmount } from "vue";
+import { ref } from 'vue'
+import navbar from '@/components/navbar.vue'
+import sidebar from '@/components/sidebar.vue'
+import { onMounted, onBeforeUnmount } from 'vue'
 
-let isMobileView = ref(false);
-let showSidebar = ref(false);
+let isMobileView = ref(false)
+let showSidebar = ref(false)
 
 const checkIsMobileView = () => {
-  isMobileView.value = window.innerWidth <= 850;
-  showSidebar.value = window.innerWidth <= 850; // Adjust breakpoint as needed
-};
+  isMobileView.value = window.innerWidth <= 850
+  showSidebar.value = window.innerWidth <= 850 // Adjust breakpoint as needed
+}
 
 onMounted(async () => {
-  checkIsMobileView();
-  window.addEventListener("resize", checkIsMobileView);
-});
+  checkIsMobileView()
+  window.addEventListener('resize', checkIsMobileView)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", checkIsMobileView);
-});
+  window.removeEventListener('resize', checkIsMobileView)
+})
 </script>
 
 <style scoped>

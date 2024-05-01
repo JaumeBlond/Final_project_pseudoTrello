@@ -1,62 +1,56 @@
-import { ref } from "vue";
-import { defineStore } from "pinia";
-import {
-  fetchActualUser,
-  createNewUser,
-  logIn,
-  logInWithProvider,
-  logOut,
-} from "@/api/usersApi";
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
+import { fetchActualUser, createNewUser, logIn, logInWithProvider, logOut } from '@/api/usersApi'
 
-export const useUserStore = defineStore("userStore", {
+export const useUserStore = defineStore('userStore', {
   state: () => {
     // State
-    const user = ref(undefined);
+    const user = ref(undefined)
 
     // Getters
 
     // Actions
     async function fetchUser() {
       try {
-        user.value = await fetchActualUser();
+        user.value = await fetchActualUser()
       } catch (error) {
-        if (error.code === "401") {
-          user.value = null;
-          return;
+        if (error.code === '401') {
+          user.value = null
+          return
         }
       }
     }
 
     async function signUp(email, password) {
       try {
-        user.value = await createNewUser(email, password);
+        user.value = await createNewUser(email, password)
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
     }
 
     async function signIn(email, password) {
       try {
-        user.value = await logIn(email, password);
+        user.value = await logIn(email, password)
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
     }
 
     async function signInWithProvider(provider) {
       try {
-        user.value = await logInWithProvider(provider);
+        user.value = await logInWithProvider(provider)
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
     }
 
     async function signOut() {
       try {
-        await logOut();
-        user.value = null;
+        await logOut()
+        user.value = null
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
     }
 
@@ -69,16 +63,16 @@ export const useUserStore = defineStore("userStore", {
       signUp,
       signIn,
       signInWithProvider,
-      signOut,
-    };
+      signOut
+    }
   },
   persist: {
     enabled: true,
     strategies: [
       {
-        key: "user",
-        storage: localStorage,
-      },
-    ],
-  },
-});
+        key: 'user',
+        storage: localStorage
+      }
+    ]
+  }
+})

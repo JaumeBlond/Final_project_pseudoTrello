@@ -45,26 +45,26 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue'
 
-const emit = defineEmits(["saveNewTask", "close"]);
+const emit = defineEmits(['saveNewTask', 'close'])
 
-const taskTitle = ref("");
-const taskDescription = ref("");
-const taskPriority = ref("");
+const taskTitle = ref('')
+const taskDescription = ref('')
+const taskPriority = ref('')
 
 const saveTask = () => {
-  emit("saveNewTask", {
+  emit('saveNewTask', {
     title: taskTitle.value,
     description: taskDescription.value,
-    priority: taskPriority.value,
-  });
-  closeModal();
-};
+    priority: taskPriority.value
+  })
+  closeModal()
+}
 
 const closeModal = () => {
-  emit("close");
-};
+  emit('close')
+}
 </script>
 
 <style scoped></style>
