@@ -4,25 +4,45 @@
     <navbar v-else />
   </div>
   <div class="app-advanced p-10">
-    <form @submit.prevent="handleSubmit" method="POST" class="w-2/3 mx-auto mt-5">
+    <form
+      @submit.prevent="handleSubmit"
+      method="POST"
+      class="w-2/3 mx-auto mt-5"
+    >
       <div class="mb-3 pt-0">
-        <input v-model="formData.name" type="text" placeholder="Your name" name="name" class="input-field" required />
+        <input
+          v-model="formData.name"
+          type="text"
+          placeholder="Your name"
+          name="name"
+          class="input-field"
+          required
+        />
       </div>
 
       <div class="mb-3 pt-0">
-        <input v-model="formData.email" type="email" placeholder="Email" name="email" class="input-field" required />
+        <input
+          v-model="formData.email"
+          type="email"
+          placeholder="Email"
+          name="email"
+          class="input-field"
+          required
+        />
       </div>
 
       <div class="mb-3 pt-0">
-        <textarea v-model="formData.message" placeholder="Your message" name="message" class="input-field" required />
+        <textarea
+          v-model="formData.message"
+          placeholder="Your message"
+          name="message"
+          class="input-field"
+          required
+        />
       </div>
 
       <div class="mb-3 pt-0">
-        <button class="
-            submit-btn
-          " type="submit">
-          Send a message
-        </button>
+        <button class="submit-btn" type="submit">Send a message</button>
       </div>
     </form>
 
@@ -34,20 +54,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 import navbar from "@/components/navbar.vue";
 import sidebar from "@/components/sidebar.vue";
-import { onMounted, onBeforeUnmount } from 'vue';
-import { supabase } from '@/api/supabase';
-
+import { onMounted, onBeforeUnmount } from "vue";
+import { supabase } from "@/api/supabase";
 
 let isMobileView = ref(false);
 let showSidebar = ref(false);
 let submitted = ref(false);
 let formData = ref({
-  name: '',
-  email: '',
-  message: ''
+  name: "",
+  email: "",
+  message: "",
 });
 
 const checkIsMobileView = () => {
@@ -57,22 +76,24 @@ const checkIsMobileView = () => {
 
 onMounted(async () => {
   checkIsMobileView();
-  window.addEventListener('resize', checkIsMobileView);
+  window.addEventListener("resize", checkIsMobileView);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', checkIsMobileView);
+  window.removeEventListener("resize", checkIsMobileView);
 });
 
 const handleSubmit = async () => {
   try {
-    const { data, error } = await supabase.from('messages').insert([formData.value]);
+    const { data, error } = await supabase
+      .from("messages")
+      .insert([formData.value]);
     if (error) {
       throw error;
     }
     submitted.value = true;
   } catch (error) {
-    console.error('Error submitting message:', error.message);
+    console.error("Error submitting message:", error.message);
   }
 };
 </script>
