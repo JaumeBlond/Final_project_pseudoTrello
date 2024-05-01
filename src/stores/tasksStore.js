@@ -1,4 +1,4 @@
-import { ref, isProxy, toRaw } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
 import {
   createNewTask,
@@ -31,7 +31,7 @@ export const useTasksStore = defineStore("tasks", () => {
       const {
         user: { id },
       } = useUserStore();
-      const newTask = await createNewTask({
+      await createNewTask({
         title: taskTitle,
         description: taskDescription,
         priority: taskPriority,

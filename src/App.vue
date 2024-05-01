@@ -6,12 +6,12 @@
 
 <script>
 export default {
-  name: "App",
-};
+  name: 'App'
+}
 </script>
 
 <style>
-@import "./style.css";
+@import './style.css';
 
 #app {
   font-family: Arial, sans-serif;

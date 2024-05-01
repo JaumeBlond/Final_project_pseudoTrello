@@ -53,33 +53,33 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue'
 
 const props = defineProps({
-  task: Object,
-});
+  task: Object
+})
 
-const emit = defineEmits(["saveTask", "close"]);
+const emit = defineEmits(['saveTask', 'close'])
 
-const taskTitle = ref(props.task.title);
-const taskDescription = ref(props.task.description);
-const taskStatus = ref(props.task.status);
-const taskPriority = ref(props.task.priority);
+const taskTitle = ref(props.task.title)
+const taskDescription = ref(props.task.description)
+const taskStatus = ref(props.task.status)
+const taskPriority = ref(props.task.priority)
 
 const saveTask = () => {
-  emit("saveTask", {
+  emit('saveTask', {
     title: taskTitle.value,
     description: taskDescription.value,
     priority: taskPriority.value,
     status: taskStatus.value,
-    taskId: props.task.id,
-  });
-  closeModal();
-};
+    taskId: props.task.id
+  })
+  closeModal()
+}
 
 const closeModal = () => {
-  emit("close");
-};
+  emit('close')
+}
 </script>
 
 <style scoped></style>

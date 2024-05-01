@@ -4,11 +4,7 @@
     <navbar v-else />
   </div>
   <div class="app-advanced p-10">
-    <form
-      @submit.prevent="handleSubmit"
-      method="POST"
-      class="w-2/3 mx-auto mt-5"
-    >
+    <form @submit.prevent="handleSubmit" method="POST" class="w-2/3 mx-auto mt-5">
       <div class="mb-3 pt-0">
         <input
           v-model="formData.name"
@@ -54,48 +50,46 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import navbar from "@/components/navbar.vue";
-import sidebar from "@/components/sidebar.vue";
-import { onMounted, onBeforeUnmount } from "vue";
-import { supabase } from "@/api/supabase";
+import { ref } from 'vue'
+import navbar from '@/components/navbar.vue'
+import sidebar from '@/components/sidebar.vue'
+import { onMounted, onBeforeUnmount } from 'vue'
+import { supabase } from '@/api/supabase'
 
-let isMobileView = ref(false);
-let showSidebar = ref(false);
-let submitted = ref(false);
+let isMobileView = ref(false)
+let showSidebar = ref(false)
+let submitted = ref(false)
 let formData = ref({
-  name: "",
-  email: "",
-  message: "",
-});
+  name: '',
+  email: '',
+  message: ''
+})
 
 const checkIsMobileView = () => {
-  isMobileView.value = window.innerWidth <= 850;
-  showSidebar.value = window.innerWidth <= 850; // Adjust breakpoint as needed
-};
+  isMobileView.value = window.innerWidth <= 850
+  showSidebar.value = window.innerWidth <= 850 // Adjust breakpoint as needed
+}
 
 onMounted(async () => {
-  checkIsMobileView();
-  window.addEventListener("resize", checkIsMobileView);
-});
+  checkIsMobileView()
+  window.addEventListener('resize', checkIsMobileView)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", checkIsMobileView);
-});
+  window.removeEventListener('resize', checkIsMobileView)
+})
 
 const handleSubmit = async () => {
   try {
-    const { data, error } = await supabase
-      .from("messages")
-      .insert([formData.value]);
+    const { error } = await supabase.from('messages').insert([formData.value])
     if (error) {
-      throw error;
+      throw error
     }
-    submitted.value = true;
+    submitted.value = true
   } catch (error) {
-    console.error("Error submitting message:", error.message);
+    console.error('Error submitting message:', error.message)
   }
-};
+}
 </script>
 
 <style scoped>

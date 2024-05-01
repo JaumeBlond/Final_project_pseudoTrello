@@ -25,7 +25,7 @@
       class="sidebar fixed top-0 left-0 bottom-0 z-50 bg-gray-200 w-1/2 sm:w-64 transform transition-transform duration-300 ease-in-out"
       :class="{
         'translate-x-0': isSidebarVisible,
-        '-translate-x-full': !isSidebarVisible,
+        '-translate-x-full': !isSidebarVisible
       }"
     >
       <button
@@ -48,19 +48,13 @@
         </svg>
       </button>
       <div class="nav-links mt-20 ml-10 p-4">
-        <router-link
-          to="/board"
-          class="block mb-2 text-sm sm:text-lg md:text-xl w-fit"
+        <router-link to="/board" class="block mb-2 text-sm sm:text-lg md:text-xl w-fit"
           >Home</router-link
         >
-        <router-link
-          to="/about"
-          class="block mb-2 text-sm sm:text-lg md:text-xl w-fit"
+        <router-link to="/about" class="block mb-2 text-sm sm:text-lg md:text-xl w-fit"
           >About</router-link
         >
-        <router-link
-          to="/contact"
-          class="block mb-2 text-sm sm:text-lg md:text-xl w-fit"
+        <router-link to="/contact" class="block mb-2 text-sm sm:text-lg md:text-xl w-fit"
           >Contact</router-link
         >
         <button
@@ -75,22 +69,22 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useUserStore } from "@/stores/userStore";
-import { useRouter } from "vue-router";
+import { ref } from 'vue'
+import { useUserStore } from '@/stores/userStore'
+import { useRouter } from 'vue-router'
 
-const { signOut } = useUserStore();
-const router = useRouter();
-let isSidebarVisible = ref(false);
+const { signOut } = useUserStore()
+const router = useRouter()
+let isSidebarVisible = ref(false)
 
 const logout = async () => {
-  await signOut();
-  router.push({ name: "login" });
-};
+  await signOut()
+  router.push({ name: 'login' })
+}
 
 const toggleSidebar = () => {
-  isSidebarVisible.value = !isSidebarVisible.value;
-};
+  isSidebarVisible.value = !isSidebarVisible.value
+}
 </script>
 
 <style scoped>
