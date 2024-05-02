@@ -4,7 +4,8 @@
     <div class="w-full md:max-w-md md:bg-zinc-300 rounded-lg p-8">
       <h1 class="text-3xl font-bold mb-8">Authentication</h1>
       <form v-if="recoveryBeenClicked && !isSignUpComputed" @submit.prevent="signUp" class="mb-8">
-        <!-- Recovery password form -->
+        <input type="email" v-model="email" placeholder="Email" required class="input-field" />
+        <button type="submit" class="btn-primary">Recover password</button>
       </form>
       <form v-else-if="!isSignUpComputed" @submit.prevent="userLogIn" class="mb-8">
         <!-- Login form -->
@@ -16,9 +17,20 @@
       </form>
 
       <form v-else @submit.prevent="createNewUser" class="mb-8">
-        <!-- Sign up form -->
+        <input type="text" v-model="name" placeholder="Name" required class="input-field" />
+        <input type="text" v-model="surname" placeholder="Surname" required class="input-field" />
+        <input type="email" v-model="email" placeholder="Email" required class="input-field" />
+        <input type="password" v-model="password" placeholder="Password" required class="input-field" />
+        <button type="submit" class="btn-primary">Sign Up</button>
       </form>
-      <!-- Navigation buttons -->
+      <div class="flex justify-between">
+        <button v-if="!isSignUpComputed" @click="ToggleRecoverPassword" class="text-gray-600">
+          {{ recoveryBeenClicked ? "Back to Sign In" : "Recover Password" }}
+        </button>
+        <button @click="toggleSignUp" class="text-gray-600">
+          {{ isSignUpComputed ? "Back to Sign In" : "Create Account" }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
