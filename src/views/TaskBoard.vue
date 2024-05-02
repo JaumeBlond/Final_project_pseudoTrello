@@ -6,84 +6,58 @@
   <div class="w-11/12 flex flex-col bg-neutral-200 mt-10 rounded-md w-11/12 mx-auto">
     <div class="flex justify-between">
       <div></div>
-      <button
-        @click="openModal"
-        class="add-task-button px-2 py-2 bg-blue-500 text-white rounded-md mt-6 mr-6 cursor-pointer w-24 pl-120 right 0"
-      >
+      <button @click="openModal"
+        class="add-task-button px-2 py-2 bg-blue-500 text-white rounded-md mt-6 mr-6 cursor-pointer w-24 pl-120 right 0">
         Add Task
       </button>
     </div>
 
-    <div
-      class="task-board-container w-11/12 mx-auto p-4 rounded-lg flex flex-wrap justify-between flex-col"
-    >
-      <div
-        v-if="isMobileView"
-        class="task-list flex flex-col items-center bg-slate-300 pb-20 rounded-md w-full pt-6"
-        v-for="list in lists"
-        :key="list.id"
-      >
+    <div class="task-board-container w-11/12 mx-auto p-4 rounded-lg flex flex-wrap justify-between flex-col">
+      <div v-if="isMobileView" class="task-list flex flex-col items-center bg-slate-300 pb-20 rounded-md w-full pt-6"
+        v-for="list in lists" :key="list.id">
         <h2 class="font-bold text-lg sm:text-xl md:text-2xl">
           {{ list.title }}
         </h2>
-        <task
-          v-for="task in list.tasks"
-          :key="task.id"
-          :task="task"
-          @delete="deleteTask"
-          @edit="editTask"
-          @dragstart="dragStart($event, task, list.id)"
-          @touchstart="touchStart($event, task, list.id)"
-          draggable="false"
-        />
+        <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask" @edit="editTask"
+          @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
+          draggable="false" />
       </div>
       <div v-else class="task-list-horizontal flex flex-wrap justify-between w-full">
-        <div
-          class="task-list flex flex-col items-center bg-slate-300 pb-20 rounded-md w-full pt-6"
-          v-for="list in lists"
-          :key="list.id"
-          @dragover.prevent
-          @drop="dropTask($event, list.id)"
-          @touchmove.prevent
-          @touchend="touchEnd($event, list.id)"
-        >
+        <div class="task-list flex flex-col items-center bg-slate-300 pb-20 rounded-md w-full pt-6"
+          v-for="list in lists" :key="list.id" @dragover.prevent @drop="dropTask($event, list.id)" @touchmove.prevent
+          @touchend="touchEnd($event, list.id)">
           <h2 class="font-bold text-lg sm:text-xl md:text-2xl">
             {{ list.title }}
           </h2>
-          <task
-            v-for="task in list.tasks"
-            :key="task.id"
-            :task="task"
-            @delete="deleteTask"
-            @edit="editTask"
-            @dragstart="dragStart($event, task, list.id)"
-            @touchstart="touchStart($event, task, list.id)"
-            draggable="true"
-          />
+          <task v-for="task in list.tasks" :key="task.id" :task="task" @delete="deleteTask" @edit="editTask"
+            @dragstart="dragStart($event, task, list.id)" @touchstart="touchStart($event, task, list.id)"
+            draggable="true" />
         </div>
       </div>
 
       <create-task-modal v-if="showCreateModal" @saveNewTask="saveNewTask" @close="closeModal" />
-      <modify-task-modal
-        v-if="showModifyModal"
-        @saveTask="saveTask"
-        @close="closeModal"
-        :task="taskOnEdit"
-      />
+      <modify-task-modal v-if="showModifyModal" @saveTask="saveTask" @close="closeModal" :task="taskOnEdit" />
     </div>
   </div>
+  <ResetPasswordModal v-if="showResetPasswordModal" @resetPassword="newPassword" />
 </template>
 
 <script setup>
 import { ref, reactive, watch } from 'vue'
+import { onMounted, onBeforeUnmount } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import Task from '@/components/Task.vue'
 import { storeToRefs } from 'pinia'
 import navbar from '@/components/navbar.vue'
 import sidebar from '@/components/sidebar.vue'
+import ResetPasswordModal from '@/components/resetModal.vue'
 import CreateTaskModal from '@/components/createTaskModal.vue'
 import ModifyTaskModal from '@/components/modifyTaskModal.vue'
 import { useTasksStore } from '@/stores/tasksStore'
 import { useUserStore } from '@/stores/userStore.js'
+
+const route = useRoute()
+const router = useRouter();
 
 const tasksStore = useTasksStore()
 const userStore = useUserStore()
@@ -91,6 +65,7 @@ const userStore = useUserStore()
 const { tasks } = storeToRefs(tasksStore)
 
 let tasksToShow = reactive([])
+let showResetPasswordModal = ref(false)
 let isMobileView = ref(false)
 let showSidebar = ref(false)
 let showCreateModal = ref(false)
@@ -240,18 +215,36 @@ const checkIsMobileView = () => {
   showSidebar.value = window.innerWidth <= 927 // Adjust breakpoint as needed
 }
 
-import { onMounted, onBeforeUnmount } from 'vue'
-
 const printTasks = () => {
   lists.forEach((list) => {
     console.log(`Tasks in ${list.title}:`, list.tasks)
   })
 }
 
+
+const newPassword = async (new_password) => {
+  await userStore.updateNewPassword(new_password.newPassword)
+  closeReset() 
+}
+
+let checkIfModal = () => {
+  if (route.fullPath.includes('recovery')) {
+    return true
+  } else {
+    return false
+  }
+};
+
+const closeReset = async () => {
+  showResetPasswordModal.value = false
+  await router.push({ path: router.currentRoute.value.path, query: {} });
+  window.location.reload();
+}
 watch(() => lists, printTasks, { deep: true })
 
 onMounted(async () => {
-  checkIsMobileView()
+  await checkIsMobileView()
+  showResetPasswordModal.value = checkIfModal()
   window.addEventListener('resize', checkIsMobileView)
   try {
     const user = userStore.user.id

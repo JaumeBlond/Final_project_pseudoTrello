@@ -32,6 +32,32 @@ export const logIn = async (email, password) => {
   return user
 }
 
+export const recoverPasswordEmail = async (email) => {
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: ''
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+  return user
+}
+
+export const setNewPassword = async (password) => {
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.updateUser({ password: password })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+  return user
+}
+
 export const logInWithProvider = async (provider) => {
   const {
     data: { user },

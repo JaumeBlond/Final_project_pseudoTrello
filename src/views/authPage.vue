@@ -1,9 +1,8 @@
 <template>
   <div class="fixed top-0 left-0 w-full h-full flex justify-center items-center">
-    <!-- Zinc background -->
     <div class="w-full md:max-w-md md:bg-zinc-300 rounded-lg p-8">
       <h1 class="text-3xl font-bold mb-8">Authentication</h1>
-      <form v-if="recoveryBeenClicked && !isSignUpComputed" @submit.prevent="signUp" class="mb-8">
+      <form v-if="recoveryBeenClicked && !isSignUpComputed" @submit.prevent="recoverPasswords" class="mb-8">
         <input type="email" v-model="email" placeholder="Email" required class="input-field" />
         <button type="submit" class="btn-primary">Recover password</button>
       </form>
@@ -31,19 +30,22 @@
           {{ isSignUpComputed ? "Back to Sign In" : "Create Account" }}
         </button>
       </div>
+      <ResetPasswordModal v-if="showResetPasswordModal" @close="closeReset" @resetPassword="updateNewPassword" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
+import ResetPasswordModal from '@/components/resetModal.vue'
+
 
 const router = useRouter()
 const userStore = useUserStore()
 
-const { signIn, signUp } = useUserStore()
+const { signIn, signUp, recoverPassword } = useUserStore()
 
 let email = ref('')
 let password = ref('')
@@ -72,7 +74,12 @@ const userLogIn = async () => {
 }
 
 const createNewUser = async () => {
-  // Sign up logic
+  await signUp(email.value, password.value)
+}
+
+
+const recoverPasswords = async () => {
+  await recoverPassword(email.value, password.value)
 }
 
 const ToggleRecoverPassword = () => {
@@ -82,6 +89,27 @@ const ToggleRecoverPassword = () => {
 const toggleSignUp = () => {
   isSignUpComputed.value = !isSignUpComputed.value
 }
+
+const closeReset = async () => {
+  showResetPasswordModal.value = false
+  await router.push({ path: router.currentRoute.value.path, query: {} });
+  window.location.reload();
+}
+
+const updateNewPassword = async () => {
+  //todo
+}
+
+let showResetPasswordModal = computed(() => {
+  let urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('type') === 'recovery') {
+    return true
+  } else {
+    return false
+  }
+});
+
+
 </script>
 
 <style scoped>
