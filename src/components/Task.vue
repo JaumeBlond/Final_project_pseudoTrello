@@ -76,7 +76,7 @@
       </div>
       <div class="text-xs text-gray-500 mt-2">{{ lastUpdate }}</div>
     </div>
-    <div class="w-1/5 flex justify-between">
+    <div class="w-1/5 flex justify-end gap-3.5">
       <button @click.stop="editTask" class="edit-button">
         <svg
           fill="#000000"
