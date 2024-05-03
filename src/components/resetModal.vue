@@ -47,10 +47,6 @@ const isPasswordTooShort = computed(() => {
     return NewPassword.value.length < 8;
 });
 
-const closeModal = () => {
-    emits('close');
-};
-
 const resetPassword = () => {
     emits('resetPassword', { NewPassword });
 };

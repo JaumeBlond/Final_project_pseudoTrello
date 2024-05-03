@@ -94,11 +94,9 @@ let lists = reactive([
 ])
 
 const sortTasksIntoLists = () => {
-  // Clear existing tasks in lists
   lists.forEach((list) => {
     list.tasks = []
   })
-  // Sort tasks into lists
   tasksToShow.value.forEach((task) => {
     const list = lists.find((list) => list.status === task.status)
     if (list) {
@@ -119,13 +117,13 @@ const closeModal = () => {
 const saveTask = async (task) => {
   await tasksStore.updateTask(task.taskId, task)
   updateTasks()
-  closeModal() // Close modal after saving task
+  closeModal() 
 }
 
 const saveNewTask = async (task) => {
   await tasksStore.createTask(task.title, task.description, task.priority)
   updateTasks()
-  closeModal() // Close modal after saving task
+  closeModal() 
 }
 
 const deleteTask = async (taskId) => {
@@ -173,7 +171,6 @@ const dropTask = async (event, targetListId) => {
         const task = sourceList.tasks.splice(taskIndex, 1)[0]
         task.status = targetList.status
         targetList.tasks.push(task)
-        // Ensure reactivity
       }
     }
   }
@@ -221,7 +218,6 @@ const printTasks = () => {
   })
 }
 
-
 const newPassword = async (new_password) => {
   await userStore.updateNewPassword(new_password.newPassword)
   closeReset() 
@@ -236,9 +232,8 @@ let checkIfModal = () => {
 };
 
 const closeReset = async () => {
-  showResetPasswordModal.value = false
   await router.push({ path: router.currentRoute.value.path, query: {} });
-  window.location.reload();
+  showResetPasswordModal.value = checkIfModal()
 }
 watch(() => lists, printTasks, { deep: true })
 

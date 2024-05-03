@@ -33,17 +33,10 @@ export const logIn = async (email, password) => {
 }
 
 export const recoverPasswordEmail = async (email) => {
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: ''
+  
+  await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://trolloist.netlify.app/'
   })
-
-  if (error) {
-    throw new Error(error.message)
-  }
-  return user
 }
 
 export const setNewPassword = async (password) => {
