@@ -219,7 +219,9 @@ const printTasks = () => {
 }
 
 const newPassword = async (new_password) => {
+  console.log('patata 2')
   await userStore.updateNewPassword(new_password.newPassword)
+  console.log('patata 4')
   closeReset() 
 }
 
